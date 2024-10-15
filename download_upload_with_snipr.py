@@ -18,3 +18,7 @@ def get_metadata_session(sessionId,outputfile="NONE.csv"):
     df_scan = pd.read_json(metadata_session_1)
     df_scan.to_csv(outputfile,index=False)
     return metadata_session
+def main():
+    print('I am at main')
+if __name__=='__main__':
+    main()

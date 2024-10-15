@@ -1,7 +1,10 @@
 #!/bin/bash
 source /opt/antspyvenv/bin/activate
-which python
+
+## download the required files:
+
+#which python
 python nonlinearregwithants.py
-#/opt/antspyvenv/bin/python
+/opt/antspyvenv/bin/python
 
 

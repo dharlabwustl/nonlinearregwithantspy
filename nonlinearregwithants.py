@@ -1,9 +1,10 @@
 
 import ants
 import pickle
+# from download_upload_with_snipr import *
 # Load the 3D CT and MRI images
-ct_image = ants.image_read('/media/atul/WDJan20222/WASHU_WORKS/PROJECTS/SNIPR/deepregbasedregistration/scct_strippedResampled1.nii.gz')   # Template (CT)
-mri_image = ants.image_read('/media/atul/WDJan20222/WASHU_WORKS/PROJECTS/SNIPR/deepregbasedregistration/mritemplate/mni_icbm152_t1_tal_nlin_sym_55_ext_bet_grayscct_strippedResampled1lin1.nii.gz')
+ct_image = ants.image_read('/software/cttemplate/scct_strippedResampled1.nii.gz')   # Template (CT)
+mri_image = ants.image_read('/software/mritemplate/mni_icbm152_t1_tal_nlin_sym_55_ext_bet_grayscct_strippedResampled1lin1.nii.gz')
 # mri_image.nii') # Target (MRI)
 
 registration_result = ants.registration(
@@ -22,17 +23,18 @@ registration_result = ants.registration(
     histogram_matching=True                 # Enable histogram matching (useful for multi-modal images like CT and MRI)
 )
 
-# Extract the registered (warped) image
-warped_ct_image = registration_result['warpedmovout']
-
-# Save the warped CT image
-ants.image_write(warped_ct_image, './warped_mri_to_ct_mi.nii')
-
-# # Optional: Save the transform parameters (forward and inverse transforms)
-# ants.write_transform(registration_result['fwdtransforms'], './forward_transform_mi.mat')
-# ants.write_transform(registration_result['invtransforms'], './inverse_transform_mi.mat')
+# # Extract the registered (warped) image
+# warped_ct_image = registration_result['warpedmovout']
 #
-# print("Registration complete using Mutual Information. Warped CT image saved.")
-# 3. Save the entire registration result using pickle for later reloading
-with open('registration_result.pkl', 'wb') as f:
-    pickle.dump(registration_result, f)
+# # Save the warped CT image
+# ants.image_write(warped_ct_image, './warped_mri_to_ct_mi.nii')
+#
+# # # Optional: Save the transform parameters (forward and inverse transforms)
+# # ants.write_transform(registration_result['fwdtransforms'], './forward_transform_mi.mat')
+# # ants.write_transform(registration_result['invtransforms'], './inverse_transform_mi.mat')
+# #
+# # print("Registration complete using Mutual Information. Warped CT image saved.")
+# # 3. Save the entire registration result using pickle for later reloading
+# with open('registration_result.pkl', 'wb') as f:
+#     pickle.dump(registration_result, f)
+get_metadata_session(sessionId,outputfile="NONE.csv")
