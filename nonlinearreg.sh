@@ -1,9 +1,14 @@
 #!/bin/bash
 source /opt/antspyvenv/bin/activate
 session_id="SNIPR02_E14051"
-session_metadata_filename=${session_id}_metadata.csv
-call_uploadsinglefile_with_URI_arguments=('call_get_metadata_session' ${session_id} ${session_metadata_filename})
+## DOWNLOAD THE SELECTED NIFTI FILE:
+URI='/data/experiments/'${session_id}
+resource_dir='NIFTI_LOCATION'
+dir_to_receive_the_data="/workinginput/"
+output_csvfile=${session_id}_NIFTI_LOCATION.csv
+call_uploadsinglefile_with_URI_arguments=('call_get_resourcefiles_metadata_saveascsv_args' ${URI} ${session_metadata_filename})
 outputfiles_present=$(python /software/download_with_session_ID.py "${call_uploadsinglefile_with_URI_arguments[@]}")
+
 ## download the required files:
 
 ##which python
