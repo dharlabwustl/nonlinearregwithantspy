@@ -25,7 +25,7 @@ def nonlinearregistration(movingimage,fixedimage,output_dir):
         type_of_transform='SyN',                # Non-linear transformation: SyN (Symmetric Normalization)
         metric='Mattes',                        # Metric: Mutual Information (Mattes MI)
         syn_metric='Mattes',                    # Mutual Information for the SyN transform
-        reg_iterations=[2000, 1000, 500, 200],  # Increasing the number of iterations at each level
+        reg_iterations=[20000, 10000, 5000, 2000],  # Increasing the number of iterations at each level
         convergence_threshold=1e-7,             # Smaller convergence threshold for better accuracy
         convergence_window_size=15,             # Larger window size for better convergence estimation
         smoothing_sigmas=[4, 2, 1, 0],          # Apply more smoothing for coarser levels, refine as you move to finer levels
