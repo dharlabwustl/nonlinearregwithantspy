@@ -23,6 +23,7 @@ api_token=os.environ['REDCAP_API']
 class arguments:
     def __init__(self,stuff=[]):
         self.stuff=stuff
+
 def bet_gray_when_bet_binary_given():
     grayfilename_nib=nib.load(sys.argv[1] ) #grayfilename)
     betfilename_nib=nib.load(sys.argv[2] ) #betfilename)
