@@ -69,7 +69,11 @@ fixedimage=$( ls ${input_dir}/*nii )
 echo ${fixedimage}
 call_function=('call_linearregistration' ${movingimage} ${fixedimage} ${input_dir} )
 outputfiles_present=$(python /software/registrationwithants.py "${call_function[@]}")
-
+#### CALL NON-LINEAR REGISTRATION
+movingimage=${input_dir}/'mov_'$(basename ${movingimage%.nii*})'_fix_'$( basename ${fixedimage%.nii*}'.nii.gz')
+echo ${movingimage}
+call_function=('call_nonlinearregistration' ${movingimage} ${fixedimage} ${input_dir} )
+outputfiles_present=$(python /software/registrationwithants.py "${call_function[@]}")
 
 
 ##which python

@@ -102,7 +102,7 @@ def linearregistration(movingimage,fixedimage,output_dir):
 
     # Save the warped (registered) CT image
     warped_ct_image = registration_result['warpedmovout']
-    ants.image_write(warped_ct_image, 'warped_ct_to_mri_affine_improved.nii')
+    ants.image_write(warped_ct_image, outputfilename) #'warped_ct_to_mri_affine_improved.nii')
 
 
 
