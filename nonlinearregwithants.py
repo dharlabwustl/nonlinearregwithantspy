@@ -1,6 +1,6 @@
 
 import ants
-import pickle
+import pickle,sys,os
 # from download_upload_with_snipr import *
 # Load the 3D CT and MRI images
 ct_image = ants.image_read('/software/cttemplate/scct_strippedResampled1.nii.gz')   # Template (CT)
@@ -37,4 +37,4 @@ registration_result = ants.registration(
 # # 3. Save the entire registration result using pickle for later reloading
 # with open('registration_result.pkl', 'wb') as f:
 #     pickle.dump(registration_result, f)
-get_metadata_session(sessionId,outputfile="NONE.csv")
+# get_metadata_session(sessionId,outputfile="NONE.csv")

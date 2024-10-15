@@ -31,4 +31,4 @@ RUN pip install --upgrade pip
 RUN pip install antspyx
 
 # Set the default command to Python shell
-CMD ["python"]
+CMD ["bash"]
