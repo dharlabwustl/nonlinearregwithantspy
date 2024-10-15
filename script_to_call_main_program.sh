@@ -31,7 +31,7 @@ echo ${TYPE_OF_PROGRAM}::TYPE_OF_PROGRAM::${SUBTYPE_OF_PROGRAM}::${ADDR[0]}::${A
 
 if [[ ${TYPE_OF_PROGRAM} == 'ANTSPY_NON_LINEAR_REG' ]]; then
   echo " I AM AT TYPE_OF_PROGRAM==ANTSPY_NON_LINEAR_REG"
-#  /software/deepregbasedregis.sh $SESSION_ID $XNAT_USER $XNAT_PASS $XNAT_HOST /input /output
+  /software/nonlinearreg.sh $SESSION_ID $XNAT_USER $XNAT_PASS $XNAT_HOST /input /output
 fi
 
 
