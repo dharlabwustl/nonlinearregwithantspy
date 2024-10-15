@@ -49,6 +49,15 @@ column_name="ID"
 column_number=$(get_column_number "${dir_to_receive_the_data}/${nifti_location_filename}" "$column_name")
 scan_id=$(awk -F',' -v row=2 -v col=$((column_number+1)) 'NR==row {print $col}' ${dir_to_receive_the_data}/${nifti_location_filename})
 echo ${scan_id}
+####
+## DOWNLOAD THE REQUIRED FILES RELATED TO THIS SCAN:
+resource_dir='NIFTI'
+extension='.nii'
+call_function=('call_download_files_with_ext_in_a_resource' ${session_id} ${scan_id} ${resource_dir} ${extension} ${dir_to_receive_the_data} )
+outputfiles_present=$(python /software/download_with_session_ID.py "${call_function[@]}")
+
+
+
 
 ##which python
 #python nonlinearregwithants.py
