@@ -33,14 +33,16 @@ URI='/data/experiments/'${session_id}
 resource_dir='NIFTI_LOCATION'
 dir_to_receive_the_data="/workinginput/"
 output_csvfile=${session_id}_NIFTI_LOCATION.csv
-call_uploadsinglefile_with_URI_arguments=('call_get_resourcefiles_metadata_saveascsv_args' ${URI} ${resource_dir} ${dir_to_receive_the_data} ${output_csvfile})
-outputfiles_present=$(python /software/download_with_session_ID.py "${call_uploadsinglefile_with_URI_arguments[@]}")
+call_function=('call_get_resourcefiles_metadata_saveascsv_args' ${URI} ${resource_dir} ${dir_to_receive_the_data} ${output_csvfile})
+outputfiles_present=$(python /software/download_with_session_ID.py "${call_function[@]}")
 column_name="URI"
 column_number=$(get_column_number "${dir_to_receive_the_data}/${output_csvfile}" "$column_name")
 echo ${column_number}
-value=$(awk -F',' -v row=2 -v col=$((column_number+1)) 'NR==row {print $col}' ${dir_to_receive_the_data}/${output_csvfile})
+nifti_locationfile_url=$(awk -F',' -v row=2 -v col=$((column_number+1)) 'NR==row {print $col}' ${dir_to_receive_the_data}/${output_csvfile})
 echo ${value}
-## download the required files:
+call_function=('call_download_a_singlefile_with_URIString' ${nifti_locationfile_url} $(basename ${nifti_locationfile_url} ) ${dir_to_receive_the_data} ${output_csvfile})
+outputfiles_present=$(python /software/download_with_session_ID.py "${call_function[@]}")
+
 
 ##which python
 #python nonlinearregwithants.py
