@@ -71,12 +71,12 @@ def linearregistration(movingimage,fixedimage,output_dir):
         moving=movingimage_ant,                        # Template image (moving)
         type_of_transform='Rigid',              # Initial rigid registration
         metric='Mattes',                        # Mutual Information (MI) for multi-modal registration
-        reg_iterations=[1500, 1000, 500],       # More iterations at each level
-        convergence_threshold=1e-6,             # Convergence threshold
-        convergence_window_size=10,             # Window size
-        smoothing_sigmas=[3, 2, 1],             # Smoothing for multi-resolution strategy
-        shrink_factors=[6, 4, 2],               # Shrink factors for multi-resolution strategy
-        transform_parameters=(0.05,),           # Smaller step size for more precision
+        reg_iterations=[3000, 2000, 1000],       # Increase iterations for better alignment
+        convergence_threshold=1e-7,              # Small convergence threshold
+        convergence_window_size=10,
+        smoothing_sigmas=[3, 2, 1],              # Smoothing for coarse to fine alignment
+        shrink_factors=[6, 4, 2],                # More coarse to fine strategy
+        transform_parameters=(0.05,),            # Small step size for gradient descent
         verbose=True,
         histogram_matching=True
     )
@@ -90,14 +90,14 @@ def linearregistration(movingimage,fixedimage,output_dir):
         moving=rigidly_aligned_ct,              # Rigidly aligned template (CT)
         type_of_transform='Affine',             # Affine transformation (linear)
         metric='Mattes',                        # Mutual Information for multi-modal registration
-        reg_iterations=[3000, 2000, 1000],      # Increased iterations for more refinement
-        convergence_threshold=1e-8,             # Smaller convergence threshold for better precision
-        convergence_window_size=15,             # Larger window size for stable convergence
-        smoothing_sigmas=[2, 1, 0],             # Smoothing strategy for multi-resolution registration
-        shrink_factors=[4, 2, 1],               # Shrinking strategy for resolution refinement
-        transform_parameters=(0.02,),           # Finer step size for gradient descent
+        reg_iterations=[5000, 3000, 2000, 1000],# Increased iterations for higher resolution accuracy
+        convergence_threshold=1e-9,             # Smaller threshold for better convergence
+        convergence_window_size=20,             # Larger window size for checking convergence
+        smoothing_sigmas=[4, 2, 1, 0],          # Reduced smoothing at finer levels (down to 0)
+        shrink_factors=[8, 6, 4, 2, 1],         # More levels of shrinking for higher accuracy
+        transform_parameters=(0.01,),           # Very small step size for gradient descent optimization
         verbose=True,
-        histogram_matching=True                 # Histogram matching enabled
+        histogram_matching=True        # Histogram matching enabled
     )
 
     # Save the warped (registered) CT image
