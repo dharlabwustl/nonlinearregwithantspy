@@ -68,7 +68,7 @@ echo ${movingimage}
 fixedimage=$( ls ${input_dir}/*nii )
 echo ${fixedimage}
 call_function=('call_linearregistration' ${movingimage} ${fixedimage} ${input_dir} )
-outputfiles_present=$(python /software/download_with_session_ID.py "${call_function[@]}")
+outputfiles_present=$(python /software/registrationwithants.py "${call_function[@]}")
 
 
 
