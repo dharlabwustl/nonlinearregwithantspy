@@ -21,7 +21,6 @@ XNAT_USER = os.environ['XNAT_USER']#
 XNAT_PASS =os.environ['XNAT_PASS'] #
 api_token=os.environ['REDCAP_API']
 xnatSession = XnatSession(username=XNAT_USER, password=XNAT_PASS, host=XNAT_HOST)
-xnatSession.renew_httpsession()
 class arguments:
     def __init__(self,stuff=[]):
         self.stuff=stuff
@@ -1259,8 +1258,8 @@ def get_resourcefiles_metadata_saveascsv(URI,resource_dir,dir_to_receive_the_dat
 
     url = (URI+'/resources/' + resource_dir +'/files?format=json')
     # print("url::{}".format(url))
-    xnatSession = XnatSession(username=XNAT_USER, password=XNAT_PASS, host=XNAT_HOST)
-    # xnatSession.renew_httpsession()
+    # xnatSession = XnatSession(username=XNAT_USER, password=XNAT_PASS, host=XNAT_HOST)
+    xnatSession.renew_httpsession()
     response = xnatSession.httpsess.get(xnatSession.host + url)
     # xnatSession.close_httpsession()
     metadata_masks=response.json()['ResultSet']['Result']
