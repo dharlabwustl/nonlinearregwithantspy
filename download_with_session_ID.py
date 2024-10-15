@@ -20,6 +20,8 @@ XNAT_HOST = XNAT_HOST_URL # os.environ['XNAT_HOST'] #
 XNAT_USER = os.environ['XNAT_USER']#
 XNAT_PASS =os.environ['XNAT_PASS'] #
 api_token=os.environ['REDCAP_API']
+xnatSession = XnatSession(username=XNAT_USER, password=XNAT_PASS, host=XNAT_HOST)
+xnatSession.renew_httpsession()
 class arguments:
     def __init__(self,stuff=[]):
         self.stuff=stuff
