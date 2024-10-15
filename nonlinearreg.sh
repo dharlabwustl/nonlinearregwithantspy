@@ -38,6 +38,8 @@ outputfiles_present=$(python /software/download_with_session_ID.py "${call_uploa
 column_name="URI"
 column_number=$(get_column_number "${dir_to_receive_the_data}/${output_csvfile}" "$column_name")
 echo ${column_number}
+value=$(awk -F',' -v row=0 -v col=$column_number 'NR==row {print $col}' ${dir_to_receive_the_data}/${output_csvfile})
+echo ${value}
 ## download the required files:
 
 ##which python
