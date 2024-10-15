@@ -66,7 +66,7 @@ outputfiles_present=$(python /software/download_with_session_ID.py "${call_funct
 
 
 ##which python
-#python nonlinearregwithants.py
+#python nonlinearregistration.py
 #/opt/antspyvenv/bin/python
 
 
