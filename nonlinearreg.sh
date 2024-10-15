@@ -39,10 +39,15 @@ column_name="URI"
 column_number=$(get_column_number "${dir_to_receive_the_data}/${output_csvfile}" "$column_name")
 echo ${column_number}
 nifti_locationfile_url=$(awk -F',' -v row=2 -v col=$((column_number+1)) 'NR==row {print $col}' ${dir_to_receive_the_data}/${output_csvfile})
-echo ${value}
+echo ${nifti_locationfile_url}
 call_function=('call_download_a_singlefile_with_URIString' ${nifti_locationfile_url} $(basename ${nifti_locationfile_url} ) ${dir_to_receive_the_data} ${output_csvfile})
 outputfiles_present=$(python /software/download_with_session_ID.py "${call_function[@]}")
-
+###########################################################################################
+## GET THE SCAN ID:
+column_name="ID"
+column_number=$(get_column_number "${dir_to_receive_the_data}/${output_csvfile}" "$column_name")
+scan_id=$(awk -F',' -v row=2 -v col=$((column_number+1)) 'NR==row {print $col}' ${dir_to_receive_the_data}/${output_csvfile})
+echo ${scan_id}
 
 ##which python
 #python nonlinearregwithants.py
