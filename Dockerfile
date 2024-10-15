@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --upgrade pip
 
 # Install ANTsPy in the virtual environment
-RUN pip install antspyx
+RUN pip install antspyx nibabel xmltodict
 
 # Set the default command to Python shell
 CMD ["bash"]

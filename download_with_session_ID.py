@@ -12,6 +12,7 @@ import numpy as np
 import pathlib
 import argparse,xmltodict
 from xnatSession import XnatSession
+from io import StringIO
 # from redcapapi_functions import *
 catalogXmlRegex = re.compile(r'.*\.xml$')
 XNAT_HOST_URL=os.environ['XNAT_HOST']  #'http://snipr02.nrg.wustl.edu:8080' #'https://snipr02.nrg.wustl.edu' #'https://snipr.wustl.edu'
@@ -33,12 +34,12 @@ def bet_gray_when_bet_binary_given():
     nib.save(array_mask, outputfilename)
 def get_scan_id_given_session_id_N_niftiname(session_id,niftiname):
     this_session_metadata=get_metadata_session(session_id)
-    this_session_metadata_df = pd.read_json(json.dumps(this_session_metadata))
+    this_session_metadata_df = StringIO(json.dumps(this_session_metadata))
     this_scan_id=''
     for session_each_metadata_id, session_each_metadata in this_session_metadata_df.iterrows():
         URL='/data/experiments/'+session_id+'/scans/'+str(session_each_metadata['ID'])
         metadata_nifti=get_resourcefiles_metadata(URL,'NIFTI')
-        df_scan = pd.read_json(json.dumps(metadata_nifti))
+        df_scan = StringIO(json.dumps(metadata_nifti))
         for df_scan_each_id, df_scan_each in df_scan.iterrows():
             if niftiname in str(df_scan_each['Name']): #.split('.ni')[0]==niftiname:
                 this_scan_id=str(session_each_metadata['ID'])
@@ -480,7 +481,7 @@ def count_brainaxial_or_thin(sessionId):
         this_session_metadata=get_metadata_session(sessionId)
         jsonStr = json.dumps(this_session_metadata)
         # print(jsonStr)
-        df = pd.read_json(jsonStr)
+        df = StringIO(jsonStr)
         try :
             numberof_thin_or_axialscans[0]=numberof_thin_or_axialscans[0]+df['type'].value_counts()['Z-Axial-Brain']
         except:
@@ -503,7 +504,7 @@ def count_niftifiles_insession(sessionId,dir_to_receive_the_data):
         this_session_metadata=get_metadata_session(sessionId)
         jsonStr = json.dumps(this_session_metadata)
         # print(jsonStr)
-        df = pd.read_json(jsonStr)
+        df = StringIO(jsonStr)
         for item_id, each_axial in df.iterrows():
             URI=each_axial['URI'] #args.stuff[1] #sys.argv[1]
             resource_dir="NIFTI" #args.stuff[2] #sys.argv[2]
@@ -537,7 +538,7 @@ def get_single_value_from_metadata_forascan(sessionId,scanId,metadata_field):
         this_session_metadata=get_metadata_session(sessionId)
         jsonStr = json.dumps(this_session_metadata)
         # print(jsonStr)
-        df = pd.read_json(jsonStr)
+        df = StringIO(jsonStr)
         df['ID']=df['ID'].apply(str)
         # this_session_metadata_df_scanid=df1[df1['ID'] == str(scanId1)]
         df_1=df.loc[(df['ID'] == str(scanId))]
@@ -555,7 +556,7 @@ def decision_which_nifti_multiplescans(sessionId,dir_to_receive_the_data="",outp
     this_session_metadata=get_metadata_session(sessionId)
     jsonStr = json.dumps(this_session_metadata)
     # print(jsonStr)
-    df = pd.read_json(jsonStr)
+    df = StringIO(jsonStr)
 
     # # df = pd.read_csv(sessionId+'_scans.csv')
     # sorted_df = df.sort_values(by=['type'], ascending=False)
@@ -575,7 +576,7 @@ def decision_which_nifti_multiplescans(sessionId,dir_to_receive_the_data="",outp
             URI=each_axial['URI']
             resource_dir='NIFTI'
             nifti_metadata=json.dumps(get_resourcefiles_metadata(URI,resource_dir)) #get_niftifiles_metadata(each_axial['URI'] )) get_resourcefiles_metadata(URI,resource_dir)
-            df_scan = pd.read_json(nifti_metadata)
+            df_scan = StringIO(nifti_metadata)
 
             for each_item_id,each_nifti in df_scan.iterrows():
                 print(each_nifti['URI'])
@@ -596,7 +597,7 @@ def decision_which_nifti_multiplescans(sessionId,dir_to_receive_the_data="",outp
                         list_of_usables_withsize.append([each_nifti['URI'],each_nifti['Name'],each_axial['ID'],number_slice])
                         jsonStr = json.dumps(list_of_usables_withsize)
                         # print(jsonStr)
-                        df = pd.read_json(jsonStr)
+                        df = StringIO(jsonStr)
                         df.columns=['URI','Name','ID','NUMBEROFSLICES']
                         df.to_csv(niftifile_location,index=False)
                         resource_dirname="NIFTI_LOCATION"
@@ -614,7 +615,7 @@ def decision_which_nifti_multiplescans(sessionId,dir_to_receive_the_data="",outp
             URI=each_axial['URI']
             resource_dir='NIFTI'
             nifti_metadata=json.dumps(get_resourcefiles_metadata(URI,resource_dir)) #get_niftifiles_metadata(each_axial['URI'] )) get_resourcefiles_metadata(URI,resource_dir)
-            df_scan = pd.read_json(nifti_metadata)
+            df_scan = StringIO(nifti_metadata)
 
             for each_item_id,each_nifti in df_scan.iterrows():
                 print(each_nifti['URI'])
@@ -635,7 +636,7 @@ def decision_which_nifti_multiplescans(sessionId,dir_to_receive_the_data="",outp
                         list_of_usables_withsize.append([each_nifti['URI'],each_nifti['Name'],each_axial['ID'],number_slice])
                         jsonStr = json.dumps(list_of_usables_withsize)
                         # print(jsonStr)
-                        df = pd.read_json(jsonStr)
+                        df = StringIO(jsonStr)
                         df.columns=['URI','Name','ID','NUMBEROFSLICES']
                         df.to_csv(niftifile_location,index=False)
                         resource_dirname="NIFTI_LOCATION"
@@ -773,7 +774,7 @@ def find_num_axial_thin(args):
     this_session_metadata=get_metadata_session(sessionId)
     jsonStr = json.dumps(this_session_metadata)
     # print(jsonStr)
-    df = pd.read_json(jsonStr)
+    df = StringIO(jsonStr)
     df_axial=df.loc[(df['type'] == 'Z-Axial-Brain') & (df['quality'] != 'unusable')] ##| (df['type'] == 'Z-Brain-Thin')]
     df_axial_num=0
     if df_axial.shape[0]>0:
@@ -795,7 +796,7 @@ def select_scan_for_analysis(args):
     this_session_metadata=get_metadata_session(sessionId)
     jsonStr = json.dumps(this_session_metadata)
     # print(jsonStr)
-    df = pd.read_json(jsonStr)
+    df = StringIO(jsonStr)
     df['NUMBEROFSLICES']=0
     df_axial=df.loc[(df['type'] == 'Z-Axial-Brain') & (df['quality'] != 'unusable')] ##| (df['type'] == 'Z-Brain-Thin')]
     df_thin=df.loc[(df['type'] == 'Z-Brain-Thin')  & (df['quality'] != 'unusable') ] ##| (df['type'] == 'Z-Brain-Thin')]
@@ -808,7 +809,7 @@ def select_scan_for_analysis(args):
             scan_meta_data=get_resourcefiles_metadata(URI,resource_dir)
             jsonStr_scan = json.dumps(scan_meta_data)
             # print(jsonStr)
-            df_scan = pd.read_json(jsonStr_scan)
+            df_scan = StringIO(jsonStr_scan)
             df_axial.at[each_id,'NUMBEROFSLICES']=df_scan.shape[0]
     except:
         pass
@@ -823,7 +824,7 @@ def select_scan_for_analysis(args):
             scan_meta_data=get_resourcefiles_metadata(URI,resource_dir)
             jsonStr_scan = json.dumps(scan_meta_data)
             # print(jsonStr)
-            df_scan = pd.read_json(jsonStr_scan)
+            df_scan = StringIO(jsonStr_scan)
             df_thin.at[each_id,'NUMBEROFSLICES']=df_scan.shape[0]
     except:
         pass
@@ -926,7 +927,7 @@ def decision_which_nifti(sessionId,dir_to_receive_the_data="",output_csvfile="")
     this_session_metadata=get_metadata_session(sessionId)
     jsonStr = json.dumps(this_session_metadata)
     # print(jsonStr)
-    df = pd.read_json(jsonStr)
+    df = StringIO(jsonStr)
     # # df = pd.read_csv(sessionId+'_scans.csv')
     # sorted_df = df.sort_values(by=['type'], ascending=False)
     # # sorted_df.to_csv('scan_sorted.csv', index=False)
@@ -960,7 +961,7 @@ def decision_which_nifti(sessionId,dir_to_receive_the_data="",output_csvfile="")
             URI=each_axial['URI']
             resource_dir='NIFTI'
             nifti_metadata=json.dumps(get_resourcefiles_metadata(URI,resource_dir)) #get_niftifiles_metadata(each_axial['URI'] )) get_resourcefiles_metadata(URI,resource_dir)
-            df_scan = pd.read_json(nifti_metadata)
+            df_scan = StringIO(nifti_metadata)
 
             for each_item_id,each_nifti in df_scan.iterrows():
                 print(each_nifti['URI'])
@@ -986,7 +987,7 @@ def decision_which_nifti(sessionId,dir_to_receive_the_data="",output_csvfile="")
             URI=each_thin['URI']
             resource_dir='NIFTI'
             nifti_metadata=json.dumps(get_resourcefiles_metadata(URI,resource_dir)) #json.dumps(get_niftifiles_metadata(each_thin['URI'] ))
-            df_scan = pd.read_json(nifti_metadata)
+            df_scan = StringIO(nifti_metadata)
 
             for each_item_id,each_nifti in df_scan.iterrows():
                 # print(each_nifti['URI'])
@@ -1008,7 +1009,7 @@ def decision_which_nifti(sessionId,dir_to_receive_the_data="",output_csvfile="")
     if len(list_of_usables_withsize) > 0:
         jsonStr = json.dumps(list_of_usables_withsize)
         # print(jsonStr)
-        df = pd.read_json(jsonStr)
+        df = StringIO(jsonStr)
         df.columns=['URI','Name','ID','NUMBEROFSLICES']
         # df_maxes = df[df['NUMBEROFSLICES']>=20 & df['NUMBEROFSLICES']<=65]
         # df=df[df.eval("NUMBEROFSLICES >=20 & (NUMBEROFSLICES <=70)" )]
@@ -1081,7 +1082,7 @@ def nifti_number_slice(niftifilename):
 # def get_urls_csvfiles_in_EDEMA_BIOMARKER_inaproject(sessions_list):
 #     jsonStr = json.dumps(sessions_list)
 #     # print(jsonStr)
-#     df = pd.read_json(jsonStr)
+#     df = StringIO(jsonStr)
 #     for item_id, each_session in df_touse.iterrows():
 #         sessionId=each_session['ID']
 #         this_session_metadata=get_metadata_session(sessionId)
@@ -1090,14 +1091,14 @@ def nifti_number_slice(niftifilename):
 #     this_session_metadata=get_metadata_session(sessionId)
 #     jsonStr = json.dumps(this_session_metadata)
 #     # print(jsonStr)
-#     df = pd.read_json(jsonStr)
+#     df = StringIO(jsonStr)
 #     df_touse=df.loc[(df['ID'] == int(scanId))]
 
 #     # print("get_resourcefiles_metadata(df_touse['URI'],resource_foldername ){}".format(get_resourcefiles_metadata(df_touse['URI'],resource_foldername )))
 #     for item_id, each_scan in df_touse.iterrows():
 #         print("each_scan['URI'] {}".format(each_scan['URI']))
 #         nifti_metadata=json.dumps(get_resourcefiles_metadata(each_scan['URI'],resource_foldername ))
-#         df_scan = pd.read_json(nifti_metadata)
+#         df_scan = StringIO(nifti_metadata)
 #         pd.DataFrame(df_scan).to_csv(os.path.join(dir_to_receive_the_data,output_csvfile),index=False)
     
 
@@ -1110,14 +1111,14 @@ def get_maskfile_scan_metadata():
     this_session_metadata=get_metadata_session(sessionId)
     jsonStr = json.dumps(this_session_metadata)
     # print(jsonStr)
-    df = pd.read_json(jsonStr)
+    df = StringIO(jsonStr)
     df_touse=df.loc[(df['ID'] == int(scanId))]
 
     # print("get_resourcefiles_metadata(df_touse['URI'],resource_foldername ){}".format(get_resourcefiles_metadata(df_touse['URI'],resource_foldername )))
     for item_id, each_scan in df_touse.iterrows():
         print("each_scan['URI'] {}".format(each_scan['URI']))
         nifti_metadata=json.dumps(get_resourcefiles_metadata(each_scan['URI'],resource_foldername ))
-        df_scan = pd.read_json(nifti_metadata)
+        df_scan = StringIO(nifti_metadata)
         pd.DataFrame(df_scan).to_csv(os.path.join(dir_to_receive_the_data,output_csvfile),index=False)
 def get_relevantfile_from_NIFTIDIR():
     sessionId=sys.argv[1]
@@ -1126,7 +1127,7 @@ def get_relevantfile_from_NIFTIDIR():
     this_session_metadata=get_metadata_session(sessionId)
     jsonStr = json.dumps(this_session_metadata)
     # print(jsonStr)
-    df = pd.read_json(jsonStr)
+    df = StringIO(jsonStr)
     # # df = pd.read_csv(sessionId+'_scans.csv') 
     # sorted_df = df.sort_values(by=['type'], ascending=False)
     # # sorted_df.to_csv('scan_sorted.csv', index=False)
@@ -1141,7 +1142,7 @@ def get_relevantfile_from_NIFTIDIR():
         for item_id, each_axial in df_axial.iterrows():
             print(each_axial['URI'])
             nifti_metadata=json.dumps(get_niftifiles_metadata(each_axial['URI'] ))
-            df_scan = pd.read_json(nifti_metadata)
+            df_scan = StringIO(nifti_metadata)
 
             for each_item_id,each_nifti in df_scan.iterrows():
                 print(each_nifti['URI'])
@@ -1154,7 +1155,7 @@ def get_relevantfile_from_NIFTIDIR():
         for item_id, each_thin in df_thin.iterrows():
             print(each_thin['URI'])
             nifti_metadata=json.dumps(get_niftifiles_metadata(each_thin['URI'] ))
-            df_scan = pd.read_json(nifti_metadata)
+            df_scan = StringIO(nifti_metadata)
 
             for each_item_id,each_nifti in df_scan.iterrows():
                 print(each_nifti['URI'])
@@ -1262,7 +1263,7 @@ def get_resourcefiles_metadata_saveascsv(URI,resource_dir,dir_to_receive_the_dat
     xnatSession.close_httpsession()
     metadata_masks=response.json()['ResultSet']['Result']
     # print("metadata_masks::{}".format(metadata_masks))
-    df_scan = pd.read_json(json.dumps(metadata_masks))
+    df_scan = StringIO(json.dumps(metadata_masks))
     pd.DataFrame(df_scan).to_csv(os.path.join(dir_to_receive_the_data,output_csvfile),index=False)
     # return metadata_masks
 def call_get_resourcefiles_metadata_saveascsv():
@@ -1546,7 +1547,7 @@ def get_metadata_subject(project_id,subject_id,outputfile="NONE.csv"):
     xnatSession.close_httpsession()
     metadata_subj=response.json()['ResultSet']['Result']
     metadata_subj_1=json.dumps(metadata_subj)
-    df_scan = pd.read_json(metadata_subj_1)
+    df_scan = StringIO(metadata_subj_1)
     df_scan.to_csv(outputfile,index=False)
     return metadata_subj
 def get_metadata_session(sessionId,outputfile="NONE.csv"):
@@ -1557,7 +1558,7 @@ def get_metadata_session(sessionId,outputfile="NONE.csv"):
     xnatSession.close_httpsession()
     metadata_session=response.json()['ResultSet']['Result']
     metadata_session_1=json.dumps(metadata_session)
-    df_scan = pd.read_json(metadata_session_1)
+    df_scan = StringIO(metadata_session_1)
     df_scan.to_csv(outputfile,index=False)
     return metadata_session
 def get_metadata_project_sessionlist(project_ID,outputfile="NONE.csv"):
@@ -1569,7 +1570,7 @@ def get_metadata_project_sessionlist(project_ID,outputfile="NONE.csv"):
     xnatSession.close_httpsession()
     metadata_session=response.json()['ResultSet']['Result']
     metadata_session_1=json.dumps(metadata_session)
-    df_scan = pd.read_json(metadata_session_1)
+    df_scan = StringIO(metadata_session_1)
     df_scan.to_csv(outputfile,index=False)
     return metadata_session
 def get_session_label(sessionId,outputfile="NONE.csv"):
@@ -1715,7 +1716,7 @@ def downloadfiletolocaldir():
         (sessionId, scanId))
     print('resource_dir_url::{}'.format(resource_dir_url))
     # resource_metadata=get_resourcefiles_metadata(resource_dir_url,resource_dirname)
-    # df_scan = pd.read_json(json.dumps(resource_metadata))
+    # df_scan = StringIO(json.dumps(resource_metadata))
     # print('df_scan::{}'.format(resource_metadata))
     url = (("/data/experiments/%s/scans/%s/resources/" + resource_dirname+ "/files?format=zip")  % 
         (sessionId, scanId))
@@ -1834,7 +1835,7 @@ def check_if_a_file_exist_in_snipr(URI, resource_dir,extension_to_find_list):
         return num_files_present
     metadata_masks=response.json()['ResultSet']['Result']
     # print("metadata_masks::{}".format(metadata_masks))
-    df_scan = pd.read_json(json.dumps(metadata_masks))
+    df_scan = StringIO(json.dumps(metadata_masks))
     for extension_to_find in extension_to_find_list:
         for x in range(df_scan.shape[0]):
             print(df_scan.loc[x,'Name'])
@@ -2066,7 +2067,7 @@ def listoffile_witha_URI_as_df(URI):
         xnatSession.close_httpsession()
         return num_files_present
     metadata_masks=response.json()['ResultSet']['Result']
-    df_listfile = pd.read_json(json.dumps(metadata_masks))
+    df_listfile = StringIO(json.dumps(metadata_masks))
     xnatSession.close_httpsession()
     return df_listfile
 def download_files_in_a_resource(URI,dir_to_save):
@@ -2091,7 +2092,7 @@ def download_files_in_scans_resources_withname_sh():
         URI = (("/data/experiments/%s")  %
                (sessionId))
         session_meta_data=get_metadata_session(URI)
-        session_meta_data_df = pd.read_json(json.dumps(session_meta_data))
+        session_meta_data_df = StringIO(json.dumps(session_meta_data))
         for index, row in session_meta_data_df.iterrows():
 
             URI = ((row["URI"]+"/resources/" + resource_dirname+ "/files?format=json")  %
