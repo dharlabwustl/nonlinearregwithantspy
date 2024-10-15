@@ -57,14 +57,16 @@ input_dir='/input'
 call_function=('call_download_files_with_ext_in_a_resource' ${session_id} ${scan_id} ${resource_dir} ${extension} ${input_dir} )
 outputfiles_present=$(python /software/download_with_session_ID.py "${call_function[@]}")
 ## DOWNLOAD THE REQUIRED FILES RELATED TO THIS SCAN:
-resource_dir='MASKS'
-extension='1_1.nii.gz'
-input_dir='/input'
-call_function=('call_download_files_with_ext_in_a_resource' ${session_id} ${scan_id} ${resource_dir} ${extension} ${input_dir} )
-outputfiles_present=$(python /software/download_with_session_ID.py "${call_function[@]}")
+#resource_dir='MASKS'
+#extension='1_1.nii.gz'
+#input_dir='/input'
+#call_function=('call_download_files_with_ext_in_a_resource' ${session_id} ${scan_id} ${resource_dir} ${extension} ${input_dir} )
+#outputfiles_present=$(python /software/download_with_session_ID.py "${call_function[@]}")
 #### CALL LINEAR REGISTRATION
 movingimage='/software/cttemplate/scct_strippedResampled1.nii.gz'
+echo ${movingimage}
 fixedimage=$( ls ${input_dir}/*nii )
+echo ${fixedimage}
 call_function=('call_linearregistration' ${movingimage} ${fixedimage} ${input_dir} )
 outputfiles_present=$(python /software/download_with_session_ID.py "${call_function[@]}")
 
