@@ -65,33 +65,48 @@ def linearregistration(movingimage,fixedimage,output_dir):
     outputfilename=os.path.join(output_dir,'mov_'+os.path.basename(movingimage).split('.nii')[0]+'_fix_'+os.path.basename(fixedimage).split('.nii')[0]+'.nii.gz')
     T_outputfilename=os.path.join(output_dir,'mov_'+os.path.basename(movingimage).split('.nii')[0]+'_fix_'+os.path.basename(fixedimage).split('.nii')[0]+'.pkl')
 
-    # Perform linear (Affine) registration with advanced parameters
-    registration_result = ants.registration(
+    # Perform an initial rigid registration to roughly align the images
+    initial_registration = ants.registration(
         fixed=fixedimage_ant,                        # Target image (fixed)
         moving=movingimage_ant,                        # Template image (moving)
-        type_of_transform='Affine',             # Linear transformation: Affine (can change to 'Rigid')
-        metric='Mattes',                        # Metric: Mutual Information (Mattes MI) for multi-modal registration
-        reg_iterations=[2000, 1000, 500],       # Number of iterations for refinement
-        convergence_threshold=1e-6,             # Convergence threshold for better precision
-        convergence_window_size=10,             # Window size for convergence
-        smoothing_sigmas=[2, 1, 0],             # Smoothing applied at different levels
-        shrink_factors=[4, 2, 1],               # Multi-resolution strategy (coarse to fine)
-        transform_parameters=(0.1,),            # Step size for gradient descent optimization
-        verbose=True,                           # Verbose output for tracking
-        histogram_matching=True                 # Histogram matching for multi-modal images
+        type_of_transform='Rigid',              # Initial rigid registration
+        metric='Mattes',                        # Mutual Information (MI) for multi-modal registration
+        reg_iterations=[1500, 1000, 500],       # More iterations at each level
+        convergence_threshold=1e-6,             # Convergence threshold
+        convergence_window_size=10,             # Window size
+        smoothing_sigmas=[3, 2, 1],             # Smoothing for multi-resolution strategy
+        shrink_factors=[6, 4, 2],               # Shrink factors for multi-resolution strategy
+        transform_parameters=(0.05,),           # Smaller step size for more precision
+        verbose=True,
+        histogram_matching=True
     )
 
-    # Save the registered (warped) CT image
-    warped_ct_image = registration_result['warpedmovout']
-    ants.image_write(warped_ct_image, outputfilename)
+    # Apply the rigidly aligned image for the affine registration
+    rigidly_aligned_ct = initial_registration['warpedmovout']
 
-    # # Save the forward and inverse transforms (automatically saved by ANTs)
-    # forward_transform = registration_result['fwdtransforms'][0]
-    # inverse_transform = registration_result['invtransforms'][0]
-    # print(f"Forward transform saved to: {forward_transform}")
-    # print(f"Inverse transform saved to: {inverse_transform}")
-    #
-    # Save the entire registration result using pickle for future use
+    # Perform the affine registration with finer parameters
+    registration_result = ants.registration(
+        fixed=fixedimage_ant,                        # Target image (fixed)
+        moving=rigidly_aligned_ct,              # Rigidly aligned template (CT)
+        type_of_transform='Affine',             # Affine transformation (linear)
+        metric='Mattes',                        # Mutual Information for multi-modal registration
+        reg_iterations=[3000, 2000, 1000],      # Increased iterations for more refinement
+        convergence_threshold=1e-8,             # Smaller convergence threshold for better precision
+        convergence_window_size=15,             # Larger window size for stable convergence
+        smoothing_sigmas=[2, 1, 0],             # Smoothing strategy for multi-resolution registration
+        shrink_factors=[4, 2, 1],               # Shrinking strategy for resolution refinement
+        transform_parameters=(0.02,),           # Finer step size for gradient descent
+        verbose=True,
+        histogram_matching=True                 # Histogram matching enabled
+    )
+
+    # Save the warped (registered) CT image
+    warped_ct_image = registration_result['warpedmovout']
+    ants.image_write(warped_ct_image, 'warped_ct_to_mri_affine_improved.nii')
+
+
+
+# Save the entire registration result using pickle for future use
     with open(T_outputfilename, 'wb') as f:
         pickle.dump(registration_result, f)
 
