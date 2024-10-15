@@ -56,7 +56,12 @@ extension='.nii'
 input_dir='/input'
 call_function=('call_download_files_with_ext_in_a_resource' ${session_id} ${scan_id} ${resource_dir} ${extension} ${input_dir} )
 outputfiles_present=$(python /software/download_with_session_ID.py "${call_function[@]}")
-
+## DOWNLOAD THE REQUIRED FILES RELATED TO THIS SCAN:
+resource_dir='MASKS'
+extension='1_1.nii.gz'
+input_dir='/input'
+call_function=('call_download_files_with_ext_in_a_resource' ${session_id} ${scan_id} ${resource_dir} ${extension} ${input_dir} )
+outputfiles_present=$(python /software/download_with_session_ID.py "${call_function[@]}")
 
 
 
