@@ -1,4 +1,5 @@
 #!/bin/bash
+source /opt/antspyvenv/bin/activate
 SESSION_ID=${1}
 XNAT_USER=${2}
 XNAT_PASS=${3}
