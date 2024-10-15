@@ -15,11 +15,13 @@ def nonlinearregistration(movingimage,fixedimage,output_dir):
     # fixedimage = sys.argv[2] ## ants.image_read('/software/mritemplate/mni_icbm152_t1_tal_nlin_sym_55_ext_bet_grayscct_strippedResampled1lin1.nii.gz')
     # # mri_image.nii') # Target (MRI)
     # output_dir=sys.argv[3]
+    movingimage_ant=ants.image_read(movingimage)
+    fixedimage_ant=ants.image_read(fixedimage)
     outputfilename=os.path.join(output_dir,'mov_'+os.path.basename(movingimage).split('.nii')[0]+'_fix_'+os.path.basename(fixedimage).split('.nii')[0]+'.nii.gz')
     T_outputfilename=os.path.join(output_dir,'mov_'+os.path.basename(movingimage).split('.nii')[0]+'_fix_'+os.path.basename(fixedimage).split('.nii')[0]+'.pkl')
     registration_result = ants.registration(
-        fixed=fixedimage,                        # Target image (fixed)
-        moving=movingimage,                        # Template image (moving)
+        fixed=fixedimage_ant,                        # Target image (fixed)
+        moving=movingimage_ant,                        # Template image (moving)
         type_of_transform='SyN',                # Non-linear transformation: SyN (Symmetric Normalization)
         metric='Mattes',                        # Metric: Mutual Information (Mattes MI)
         syn_metric='Mattes',                    # Mutual Information for the SyN transform
